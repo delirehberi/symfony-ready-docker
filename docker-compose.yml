@@ -1,0 +1,30 @@
+web:
+  image: images/nginx
+  ports:
+    - "80:80"
+  volumes:
+    - ~/web:/var/www
+    - ~/nginx-sites:/etc/nginx/sites-enabled
+  links:
+    - php:php
+php:
+  image: images/php
+  volumes:
+    - ~/php/php-fpm.conf:/usr/local/etc/php/php-fpm.conf
+    - ~/php/php.ini:/usr/local/etc/php/conf.d/date.ini
+    - ~/web/trt:/var/www/trt
+    - ~/logs:/var/www/trt/app/logs
+  links:
+    - elasticsearch:elasticsearch
+    - db:database
+  tty: true
+db:
+  image: sameersbn/mysql
+  volumes:
+   - /var/lib/mysql
+  environment:
+   - DB_NAME=trtdb
+   - DB_USER=trtuser
+   - DB_PASS=trtpass
+elasticsearch:
+  image: elasticsearch
